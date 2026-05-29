@@ -1,9 +1,10 @@
 # type: ignore
 from typing import Any, Generic, Sequence, TypeVar
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
+from sqlalchemy.sql import Select
 from sqlalchemy.sql.base import ExecutableOption
 
 ModelType = TypeVar("ModelType", bound=DeclarativeMeta)  # pylint: disable=invalid-name
@@ -14,6 +15,34 @@ class BaseRepository(Generic[ModelType]):
 
     def __init__(self, model: type[ModelType]):
         self.model = model
+
+    def _apply_filters(self, query: Select, filters: dict | None) -> Select:
+        """Apply ``field`` / ``field__op`` filters to a query.
+
+        Supported operators: ``in``, ``gte``, ``lte``, ``gt``, ``lt`` and bare
+        equality (no suffix). Unknown fields are ignored.
+        """
+        if not filters:
+            return query
+
+        for key, value in filters.items():
+            field, _, operator = key.partition("__")
+            column = getattr(self.model, field, None)
+            if column is None:
+                continue
+            if operator in ("", "eq"):
+                query = query.where(column == value)
+            elif operator == "in":
+                query = query.where(column.in_(value if isinstance(value, list) else [value]))
+            elif operator == "gte":
+                query = query.where(column >= value)
+            elif operator == "lte":
+                query = query.where(column <= value)
+            elif operator == "gt":
+                query = query.where(column > value)
+            elif operator == "lt":
+                query = query.where(column < value)
+        return query
 
     async def get(
             self,
@@ -42,15 +71,18 @@ class BaseRepository(Generic[ModelType]):
         if options:
             query = query.options(*options)
 
-        if filters:
-            for field, value in filters.items():
-                if hasattr(self.model, field):
-                    query = query.where(getattr(self.model, field) == value)
-
+        query = self._apply_filters(query, filters)
         query = query.offset(skip).limit(limit)
 
         result = await session.execute(query)
         return result.scalars().unique().all()
+
+    async def count(self, session: AsyncSession, filters: dict | None = None) -> int:
+        """Count records matching the optional filters."""
+        query = select(func.count()).select_from(self.model)
+        query = self._apply_filters(query, filters)
+        result = await session.execute(query)
+        return result.scalar_one()
 
     async def create(self, session: AsyncSession, obj_in: dict) -> ModelType:
         """Create a new record."""
