@@ -1,8 +1,7 @@
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
-
 from app.models.task import TaskStatus
 from app.repositories.task_repository import task_repository
 
@@ -34,11 +33,7 @@ class TestCreateTask:
             await task_repository.create(db_session, task)
         assert str(err.value) == "'wrong' is an invalid keyword argument for Task"
 
-    async def test_already_present(
-            self,
-            db_session,
-            task_factory
-    ):
+    async def test_already_present(self, db_session, task_factory):
         existent_task = await task_factory()
         task = {
             "title": existent_task.title,
@@ -48,10 +43,7 @@ class TestCreateTask:
         }
         with pytest.raises(Exception) as err:
             await task_repository.create(db_session, task)
-        assert (
-                'duplicate key value violates unique constraint "task_title_key"'
-                in str(err.value)
-        )
+        assert 'duplicate key value violates unique constraint "task_title_key"' in str(err.value)
 
 
 @pytest.mark.asyncio
@@ -65,6 +57,7 @@ class TestGetTask:
         _ = await task_factory()
         get_task = await task_repository.get(db_session, uuid.uuid4())
         assert not get_task
+
 
 @pytest.mark.asyncio
 class TestListTask:
@@ -99,6 +92,7 @@ class TestListTask:
         all_tasks = await task_repository.list(db_session, skip=2, limit=1)
         assert all_tasks == [task_3]
 
+
 @pytest.mark.asyncio
 class TestDeleteTask:
     async def test_ok(self, db_session, task_factory) -> None:
@@ -110,19 +104,24 @@ class TestDeleteTask:
         deleted = await task_repository.delete(db_session, uuid.uuid4())
         assert not deleted
 
+
 @pytest.mark.asyncio
 class TestUpdateTask:
     async def test_ok(self, db_session, task_factory):
         old_due_date = datetime.now(timezone.utc)
-        existent_task = await task_factory(title='old_title', description='old_description', due_date=old_due_date,
-                                           status=TaskStatus.INCOMPLETE)
-        assert existent_task.title == 'old_title'
-        assert existent_task.description == 'old_description'
+        existent_task = await task_factory(
+            title="old_title",
+            description="old_description",
+            due_date=old_due_date,
+            status=TaskStatus.INCOMPLETE,
+        )
+        assert existent_task.title == "old_title"
+        assert existent_task.description == "old_description"
         assert existent_task.due_date == old_due_date
         assert existent_task.status == TaskStatus.INCOMPLETE
 
-        new_title = 'new_title'
-        new_description = 'new_description'
+        new_title = "new_title"
+        new_description = "new_description"
         new_due_date = old_due_date + timedelta(days=1)
         new_status = TaskStatus.COMPLETE
 
@@ -144,20 +143,12 @@ class TestUpdateTask:
         assert updated_obj.modified_author == "author"
         assert updated_obj.modified_at
 
-
-    async def test_already_present(
-            self,
-            db_session,
-            task_factory
-    ):
-        existent_task_1 = await task_factory(title='title_1')
-        existent_task_2 = await task_factory(title='title_2')
+    async def test_already_present(self, db_session, task_factory):
+        existent_task_1 = await task_factory(title="title_1")
+        existent_task_2 = await task_factory(title="title_2")
         task = {
             "title": existent_task_1.title,
         }
         with pytest.raises(Exception) as err:
             await task_repository.update(db_session, existent_task_2, task)
-        assert (
-                'duplicate key value violates unique constraint "task_title_key"'
-                in str(err.value)
-        )
+        assert 'duplicate key value violates unique constraint "task_title_key"' in str(err.value)

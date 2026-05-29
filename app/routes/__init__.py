@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routes import status, task, authentication
+from app.routes import authentication, status, task
 
 
 def add_app_routes(app: FastAPI) -> None:

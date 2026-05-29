@@ -45,10 +45,10 @@ class BaseRepository(Generic[ModelType]):
         return query
 
     async def get(
-            self,
-            session: AsyncSession,
-            obj_id: Any,
-            *options: ExecutableOption,
+        self,
+        session: AsyncSession,
+        obj_id: Any,
+        *options: ExecutableOption,
     ) -> ModelType | None:
         """Fetch a single record by primary key."""
         query = select(self.model).where(self.model.id == obj_id)
@@ -59,12 +59,12 @@ class BaseRepository(Generic[ModelType]):
         return result.scalars().first()
 
     async def list(
-            self,
-            session: AsyncSession,
-            skip: int = 0,
-            limit: int = 100,
-            filters: dict | None = None,
-            *options: ExecutableOption,
+        self,
+        session: AsyncSession,
+        skip: int = 0,
+        limit: int = 100,
+        filters: dict | None = None,
+        *options: ExecutableOption,
     ) -> Sequence[ModelType]:
         """Fetch multiple records with optional equality filters."""
         query = select(self.model)

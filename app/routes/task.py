@@ -5,9 +5,9 @@ from fastapi import APIRouter, Depends, status
 from app.db.session import SessionDep
 from app.exceptions.app_exceptions import ObjNotFoundException
 from app.models import Task
-from app.repositories.task_repository import task_repository
+from app.repositories.task_repository import task_repository  # type: ignore
 from app.schemas.pagination import Page, Pagination
-from app.schemas.task import TaskQuery, TaskRead, TaskCreate, TaskPatch
+from app.schemas.task import TaskCreate, TaskPatch, TaskQuery, TaskRead
 from app.services.authentication import get_current_user
 
 router = APIRouter(prefix="/tasks", dependencies=[Depends(get_current_user)])

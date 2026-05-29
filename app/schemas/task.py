@@ -40,8 +40,12 @@ class TaskQuery:
         self,
         title: list[str] | None = Query(None, description="Match any of these exact titles"),
         status: list[TaskStatus] | None = Query(None, description="Match any of these statuses"),
-        due_after: datetime | None = Query(None, description="Only tasks due at or after this time"),
-        due_before: datetime | None = Query(None, description="Only tasks due at or before this time"),
+        due_after: datetime | None = Query(
+            None, description="Only tasks due at or after this time"
+        ),
+        due_before: datetime | None = Query(
+            None, description="Only tasks due at or before this time"
+        ),
     ):
         self.title = title
         self.status = status

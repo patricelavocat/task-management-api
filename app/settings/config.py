@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "task-management"
     VERSION: str = "0.1.0"
     START_API_DATE: datetime = datetime.now(UTC)
-    SECRET_KEY: str = "change-me-in-production"
+    SECRET_KEY: str = "change-me-in-production"  # noqa
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 1440

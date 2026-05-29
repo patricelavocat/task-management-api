@@ -1,9 +1,3 @@
-from app.services.authentication import (
-    authenticate_user,
-    create_tokens,
-    decode_token,
-    verify_refresh_token,
-)
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
@@ -11,9 +5,15 @@ from starlette.requests import Request
 
 from app.db.session import SessionDep
 from app.exceptions.app_exceptions import AuthenticationError
-from app.repositories.user_repository import user_repository
+from app.repositories.user_repository import user_repository  # type: ignore
 from app.schemas.token import Token, TokenRefreshRequest
 from app.schemas.user import UserCreate, UserRead
+from app.services.authentication import (
+    authenticate_user,
+    create_tokens,
+    decode_token,
+    verify_refresh_token,
+)
 from app.settings.config import settings
 
 router = APIRouter(prefix="/auth")
@@ -21,9 +21,9 @@ router = APIRouter(prefix="/auth")
 
 @router.post("/login")
 async def login(
-        request: Request,
-        db_session: SessionDep,
-        form_data: OAuth2PasswordRequestForm = Depends(),
+    request: Request,
+    db_session: SessionDep,
+    form_data: OAuth2PasswordRequestForm = Depends(),
 ) -> Token:
     is_authenticated = await authenticate_user(db_session, form_data.username, form_data.password)
     if not is_authenticated:
@@ -51,11 +51,14 @@ async def refresh(request: Request, token_refresh_req: TokenRefreshRequest) -> T
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_user(
-        db_session: SessionDep,
-        create_user: UserCreate,
+    db_session: SessionDep,
+    create_user: UserCreate,
 ) -> UserRead:
-    user = user_repository.create(db_session, {
-        'email': create_user.email,
-        'password_hash': create_user.hash_password,
-    })
+    user = user_repository.create(
+        db_session,
+        {
+            "email": create_user.email,
+            "password_hash": create_user.hash_password,
+        },
+    )
     return UserRead.model_validate(user)

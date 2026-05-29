@@ -1,3 +1,4 @@
+# type: ignore
 from app.models.task import Task
 from app.repositories.base import BaseRepository
 

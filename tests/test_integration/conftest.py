@@ -5,16 +5,15 @@ from typing import AsyncGenerator
 import pytest_asyncio
 from alembic import command
 from alembic.config import Config
-from httpx import AsyncClient, ASGITransport
-from sqlalchemy import event
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-
 from app.db.session import get_session
 from app.main import app
-from app.services.authentication import get_current_user
-from app.settings.config import settings
 from app.models import Task
 from app.repositories.task_repository import task_repository
+from app.services.authentication import get_current_user
+from app.settings.config import settings
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy import event
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 engine = create_async_engine(
     str(settings.POSTGRES.SQLALCHEMY_DATABASE_URI),
@@ -31,6 +30,7 @@ TestingAsyncSessionLocal = async_sessionmaker(
     autocommit=False,
     class_=AsyncSession,
 )
+
 
 def _drop_all_tables(connection):
     from app.models.base import BaseModel
@@ -88,6 +88,7 @@ async def db_session() -> AsyncGenerator[AsyncSession]:
             await trans.rollback()  # Rollback to initial state
             await async_session.close()
 
+
 @pytest_asyncio.fixture
 async def client(db_session) -> AsyncGenerator[AsyncClient]:
     def fake_current_user():
@@ -101,6 +102,7 @@ async def client(db_session) -> AsyncGenerator[AsyncClient]:
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client
     app.dependency_overrides.clear()
+
 
 @pytest_asyncio.fixture
 async def task_factory(db_session):

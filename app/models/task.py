@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import String, DateTime, Enum
+from sqlalchemy import DateTime, Enum, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models import BaseModel
@@ -11,6 +11,7 @@ class TaskStatus(StrEnum):
     INCOMPLETE = "incomplete"
     COMPLETE = "complete"
     ERROR = "error"
+
 
 class Task(BaseModel):
     __tablename__ = "task"

@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Response
 from starlette import status
 
-from app.settings.config import settings
-from app.schemas.status import Status
 from app.db.info import DB_AVAILABLE, database_info
 from app.db.session import SessionDep
+from app.schemas.status import Status
+from app.settings.config import settings
 
 router = APIRouter()
 

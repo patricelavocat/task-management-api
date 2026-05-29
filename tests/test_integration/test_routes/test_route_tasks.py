@@ -1,9 +1,8 @@
 # pylint: disable=unused-argument
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
-
 from app.models.task import TaskStatus
 
 TASK_KEYS = {

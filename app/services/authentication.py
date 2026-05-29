@@ -1,22 +1,21 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Tuple
 
-import httpx
 import jwt
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 from pwdlib import PasswordHash
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 
-from app.repositories.user_repository import user_repository
-from app.settings.config import settings
 from app.exceptions.app_exceptions import (
     AuthenticationError,
 )
+from app.repositories.user_repository import user_repository  # type: ignore
+from app.settings.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 async def authenticate_user(session: AsyncSession, email: str, password: str) -> bool:
     results = await user_repository.list(session, filters={"email": email})
@@ -25,8 +24,8 @@ async def authenticate_user(session: AsyncSession, email: str, password: str) ->
         return False
 
     password_hash = PasswordHash.recommended()
-    return password_hash.verify(password, results[0].password)
-
+    is_ok: bool = password_hash.verify(password, results[0].password)
+    return is_ok
 
 
 def create_token(data: dict, expires_delta_minutes: int) -> str:
@@ -41,9 +40,7 @@ def create_tokens(
     email: str, expires_access_delta_minutes: int, expires_refresh_delta_minutes: int
 ) -> Tuple[str, str]:
     access_token = create_token({"sub": email}, expires_access_delta_minutes)
-    refresh_token = create_token(
-        {"sub": email, "type": "refresh"}, expires_refresh_delta_minutes
-    )
+    refresh_token = create_token({"sub": email, "type": "refresh"}, expires_refresh_delta_minutes)
     return access_token, refresh_token
 
 

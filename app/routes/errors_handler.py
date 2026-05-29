@@ -42,13 +42,14 @@ def _handle_db_not_found_exceptions(request: Request, exception: ObjNotFoundExce
         status_code=status.HTTP_404_NOT_FOUND,
     )
 
+
 def _handle_db_action_exceptions(request: Request, exception: IntegrityError) -> Response:
     """Handle all "IntegrityError" exceptions, for user friendly response
-        Args:
-            exception (IntegrityError): Caught exception
-        Returns:
-            Response: Https response, with the related status code
-        """
+    Args:
+        exception (IntegrityError): Caught exception
+    Returns:
+        Response: Https response, with the related status code
+    """
     logger.error(exception)
     return JSONResponse(
         content={"error": "Cannot do this action"},
