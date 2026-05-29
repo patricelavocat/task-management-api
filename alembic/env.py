@@ -5,7 +5,7 @@ from logging.config import fileConfig
 
 from alembic import context
 from alembic.script import ScriptDirectory
-from app.models.base import BaseModel
+from app.models import BaseModel
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config

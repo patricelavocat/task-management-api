@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Response
 from starlette import status
 
 from app.settings.config import settings

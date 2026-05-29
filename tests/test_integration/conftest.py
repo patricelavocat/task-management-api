@@ -1,20 +1,19 @@
-import os
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import AsyncGenerator
 
-import pytest
 import pytest_asyncio
 from alembic import command
 from alembic.config import Config
-from dotenv import load_dotenv
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy import event
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
-from db.session import get_session
-from main import app
-from settings.config import settings
-
+from app.db.session import get_session
+from app.main import app
+from app.settings.config import settings
+from app.models import Task
+from app.repositories.task_repository import task_repository
 
 engine = create_async_engine(
     str(settings.POSTGRES.SQLALCHEMY_DATABASE_URI),
@@ -100,3 +99,17 @@ async def client(db_session) -> AsyncGenerator[AsyncClient]:
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client
     app.dependency_overrides.clear()
+
+@pytest_asyncio.fixture
+async def task_factory(db_session):
+    async def _factory(**overrides) -> Task:
+        default_data = {
+            "title": "title",
+            "description": "description",
+            "due_date": datetime.now(timezone.utc),
+            "created_author": "author",
+        }
+        default_data.update(overrides)
+        return await task_repository.create(db_session, default_data)
+
+    return _factory
