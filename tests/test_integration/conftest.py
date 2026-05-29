@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 
 from app.db.session import get_session
 from app.main import app
+from app.services.authentication import get_current_user
 from app.settings.config import settings
 from app.models import Task
 from app.repositories.task_repository import task_repository
@@ -95,6 +96,7 @@ async def client(db_session) -> AsyncGenerator[AsyncClient]:
     def override_get_session():
         yield db_session
 
+    app.dependency_overrides[get_current_user] = fake_current_user
     app.dependency_overrides[get_session] = override_get_session
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client

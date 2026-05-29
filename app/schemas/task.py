@@ -2,21 +2,9 @@ from datetime import datetime
 from uuid import UUID
 
 from fastapi import Query
-from pydantic import BaseModel, ConfigDict
-from stringcase import camelcase
 
 from app.models.task import TaskStatus
-
-
-class CamelModel(BaseModel):
-    """Shared config for task schemas: camelCase aliases, ORM loading, no extras."""
-
-    model_config = ConfigDict(
-        extra="forbid",
-        from_attributes=True,
-        alias_generator=camelcase,
-        populate_by_name=True,
-    )
+from app.schemas.base import CamelModel
 
 
 class TaskRead(CamelModel):

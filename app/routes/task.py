@@ -8,8 +8,9 @@ from app.models import Task
 from app.repositories.task_repository import task_repository
 from app.schemas.pagination import Page, Pagination
 from app.schemas.task import TaskQuery, TaskRead, TaskCreate, TaskPatch
+from app.services.authentication import get_current_user
 
-router = APIRouter(prefix="/tasks")
+router = APIRouter(prefix="/tasks", dependencies=[Depends(get_current_user)])
 
 
 @router.get("")

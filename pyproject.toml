@@ -10,12 +10,13 @@ dependencies = [
     "uvicorn>=0.35.0",
     "alembic>=1.16.4",
     "pydantic-settings>=2.10.1",
-    "pydantic>=2.11.7",
+    "pydantic[email]>=2.11.7",
     "anyio>=4.10.0",
     "asyncpg>=0.30.0",
     "greenlet>=3.2.4",
     "prometheus-fastapi-instrumentator>=7.1.0",
     "stringcase>=1.2.0",
+    "pwdlib[argon2]>=0.3.0",
 ]
 
 [dependency-groups]
