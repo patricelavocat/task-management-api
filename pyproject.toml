@@ -17,6 +17,7 @@ dependencies = [
     "prometheus-fastapi-instrumentator>=7.1.0",
     "stringcase>=1.2.0",
     "pwdlib[argon2]>=0.3.0",
+    "pyjwt>=2.13.0",
 ]
 
 [dependency-groups]
