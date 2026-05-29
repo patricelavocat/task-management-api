@@ -1,0 +1,39 @@
+# Docker files
+.dockerignore
+Dockerfile
+Dockerfile.*
+
+# Byte-compiled / optimized / DLL files
+__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.mypy_cache
+.pytest_cache
+.tox
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*,cover
+*.log
+.git
+.idea
+
+# Distribution / packaging
+build
+.Python
+
+# virtualenv
+env
+venv
+.venv
+
+.idea/**
+.local/**

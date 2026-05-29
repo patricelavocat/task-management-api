@@ -1,0 +1,65 @@
+[project]
+name = "app"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.13"
+readme = "README.md"
+dependencies = [
+    "fastapi[standard]>=0.116.1",
+    "sqlalchemy>=2.0.43",
+    "uvicorn>=0.35.0",
+    "alembic>=1.16.4",
+    "pydantic-settings>=2.10.1",
+    "pydantic>=2.11.7",
+    "anyio>=4.10.0",
+    "asyncpg>=0.30.0",
+    "greenlet>=3.2.4",
+    "prometheus-fastapi-instrumentator>=7.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "mypy>=1.17.1",
+    "pytest-mock>=3.14.1",
+    "python-dotenv>=1.1.1",
+    "ruff>=0.12.9",
+    "pytest-asyncio>=1.1.0",
+    "freezegun>=1.5.5",
+    "pre-commit>=4.3.0",
+    "coverage>=7.10.4",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["app", "tests", "alembic"]
+extend-exclude = [".local"]
+
+[tool.ruff.lint]
+extend-select = ["I", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S"]
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+check_untyped_defs = true
+disallow_incomplete_defs = true
+strict_optional = true
+packages = ["app"]
+
+[tool.towncrier]
+package = "taskmanagement"
+package_dir = "app"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "-vvv"
+log_cli = 1
+log_cli_level = "warning"
+testpaths = ["tests"]

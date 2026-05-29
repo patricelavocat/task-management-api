@@ -1,0 +1,43 @@
+
+stages:
+  - lint
+  - tests
+
+.python_jobs_generic_info: &python_jobs_generic_info
+  image: ghcr.io/astral-sh/uv:python3.13-alpine
+  before_script:
+    - uv sync
+  cache:
+    paths:
+      - .venv/
+      - .cache/pip
+
+lint:mypy:
+  <<: *python_jobs_generic_info
+  stage: lint
+  script:
+    - uv run mypy
+
+lint:ruff:
+  <<: *python_jobs_generic_info
+  stage: lint
+  script:
+    - uv run ruff check
+
+tests:
+  <<: *python_jobs_generic_info
+  stage: tests
+  services:
+    - postgres:latest
+  variables:
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_NAME: taskmanagement
+    DB_USER: postgres
+    DB_PASSWORD: postgres
+    POSTGRES_DB: taskmanagement
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/taskmanagement
+  script:
+    - uv run pytest tests

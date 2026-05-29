@@ -1,0 +1,28 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.7
+    hooks:
+      - id: ruff
+        name: ruff check back
+        args:
+          - --fix
+          - --exit-non-zero-on-fix
+          - --show-fixes
+      - id: ruff-format
+        name: ruff format back
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.19.1
+    hooks:
+      - id: mypy
+        name: mypy
+        args: ["--config-file=pyproject.toml", "app"]
+        pass_filenames: false
+        stages: [ pre-commit ]
