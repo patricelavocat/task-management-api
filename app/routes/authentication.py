@@ -54,11 +54,12 @@ async def register_user(
     db_session: SessionDep,
     create_user: UserCreate,
 ) -> UserRead:
-    user = user_repository.create(
+    user = await user_repository.create(
         db_session,
         {
             "email": create_user.email,
             "password_hash": create_user.hash_password,
+            "created_author": create_user.email,
         },
     )
     return UserRead.model_validate(user)

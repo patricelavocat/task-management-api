@@ -24,7 +24,7 @@ async def authenticate_user(session: AsyncSession, email: str, password: str) ->
         return False
 
     password_hash = PasswordHash.recommended()
-    is_ok: bool = password_hash.verify(password, results[0].password)
+    is_ok: bool = password_hash.verify(password, results[0].password_hash)
     return is_ok
 
 
